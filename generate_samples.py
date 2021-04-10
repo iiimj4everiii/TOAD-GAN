@@ -23,6 +23,8 @@ from mario.special_mario_downsampling import special_mario_downsampling
 from generate_noise import generate_spatial_noise
 from models import load_trained_pyramid
 
+from utils import load_level, play_level
+
 
 def generate_samples(generators, noise_maps, reals, noise_amplitudes, opt, in_s=None, scale_v=1.0, scale_h=1.0,
                      current_scale=0, gen_start_scale=0, num_samples=50, render_images=True, save_tensors=False,
@@ -164,6 +166,7 @@ def generate_samples(generators, noise_maps, reals, noise_amplitudes, opt, in_s=
                     if save_tensors:
                         os.makedirs("%s/torch" % dir2save, exist_ok=True)
                     os.makedirs("%s/txt" % dir2save, exist_ok=True)
+                    os.makedirs("%s/z" % dir2save, exist_ok=True) # For z
                 except OSError:
                     pass
 
@@ -178,6 +181,16 @@ def generate_samples(generators, noise_maps, reals, noise_amplitudes, opt, in_s=
                 # Save level txt
                 with open("%s/txt/%d_sc%d.txt" % (dir2save, n, current_scale), "w") as f:
                     f.writelines(level)
+
+                # Save the z
+                # with open("%s/z/%d_sc%d.txt" % (dir2save, n, current_scale), "w") as fz:
+                    # fz.writelines(z_curr)
+
+                # Play the level
+                level_obj = load_level("%s/txt/%d_sc%d.txt" % (dir2save, n, current_scale))
+                perc = play_level(level_obj)
+                print()
+                print(perc)
 
                 # Save torch tensor
                 if save_tensors:
