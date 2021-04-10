@@ -23,7 +23,7 @@ def get_tags(opt):
 def main():
     """ Main Training funtion. Parses inputs, inits logger, trains, and then generates some samples. """
 
-    render_mario = False
+    render_mario = True
 
     # torch.autograd.set_detect_anomaly(True)
 
