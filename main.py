@@ -14,11 +14,12 @@ import wandb
 import sys
 import torch
 
+from utils import get_filename_without_ext
+
 
 def get_tags(opt):
     """ Get Tags for logging from input name. Helpful for wandb. """
     return [opt.input_name.split(".")[0]]
-
 
 def main():
     """ Main Training funtion. Parses inputs, inits logger, trains, and then generates some samples. """
@@ -60,8 +61,18 @@ def main():
     # Read level according to input arguments
     real = read_level(opt, None, replace_tokens).to(opt.device)
 
-    # Train!
-    generators, noise_maps, reals, noise_amplitudes = train(real, opt)
+    # Negative niter is a flag for reusing previously trained networks
+    if opt.niter < 0:
+        trained_networks_dir = "C:/Users/minjiang/Documents/AI for Games/Research Project/TOAD-GAN-project/output/"\
+                               + get_filename_without_ext(opt.input_name)   # Usually in the output directory
+
+        noise_maps = torch.load("%s/noise_maps.pth" % trained_networks_dir)
+        generators = torch.load("%s/generators.pth" % trained_networks_dir)
+        reals = torch.load("%s/reals.pth" % trained_networks_dir)
+        noise_amplitudes = torch.load("%s/noise_amplitudes.pth" % trained_networks_dir)
+    else:
+        # Train!
+        generators, noise_maps, reals, noise_amplitudes = train(real, opt)
 
     # Generate Samples of same size as level
     logger.info("Finished training! Generating random samples...")
@@ -69,15 +80,15 @@ def main():
     generate_samples(generators, noise_maps, reals, noise_amplitudes, opt, render_mario, in_s=in_s)
 
     # Generate samples of smaller size than level
-    logger.info("Generating arbitrary sized random samples...")
-    scale_v = 0.8  # Arbitrarily chosen scales
-    scale_h = 0.4
-    real_down = downsample(1, [[scale_v, scale_h]], real, opt.token_list)
-    real_down = real_down[0]
+    #logger.info("Generating arbitrary sized random samples...")
+    #scale_v = 0.8  # Arbitrarily chosen scales
+    #scale_h = 0.4
+    #real_down = downsample(1, [[scale_v, scale_h]], real, opt.token_list)
+    #real_down = real_down[0]
     # necessary for correct input shape
-    in_s = torch.zeros(real_down.shape, device=opt.device)
-    generate_samples(generators, noise_maps, reals, noise_amplitudes, opt, render_mario, in_s=in_s,
-                     scale_v=scale_v, scale_h=scale_h, save_dir="arbitrary_random_samples",)
+    #in_s = torch.zeros(real_down.shape, device=opt.device)
+    #generate_samples(generators, noise_maps, reals, noise_amplitudes, opt, render_mario, in_s=in_s,
+    #                 scale_v=scale_v, scale_h=scale_h, save_dir="arbitrary_random_samples",)
 
 
 if __name__ == "__main__":

@@ -177,7 +177,7 @@ def play_level(level_obj, game, gateway, render_mario):
         # agent = gateway.jvm.agents.robinBaumgarten.Agent()
         # game.setAgent(agent)
         # while True:
-        result = game.gameLoop(''.join(level_obj.ascii_level), 20, 0, render_mario, 1000000)
+        result = game.gameLoop(''.join(level_obj.ascii_level), 20, 0, render_mario, 30)
         perc = int(result.getCompletionPercentage() * 100)
         error_msg.set("Level Played. Completion Percentage: %d%%" % perc)
     except Exception:
@@ -192,3 +192,7 @@ def play_level(level_obj, game, gateway, render_mario):
     is_loaded.set(True)
     # use_gen.set(remember_use_gen)  # only set use_gen to True if it was previously
     return perc
+
+
+def get_filename_without_ext(filename_with_ext):
+    return os.path.splitext(filename_with_ext)[0]
