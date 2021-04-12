@@ -63,8 +63,7 @@ def main():
 
     # Negative niter is a flag for reusing previously trained networks
     if opt.niter < 0:
-        trained_networks_dir = "C:/Users/minjiang/Documents/AI for Games/Research Project/TOAD-GAN-project/output/"\
-                               + get_filename_without_ext(opt.input_name)   # Usually in the output directory
+        trained_networks_dir = "output/" + get_filename_without_ext(opt.input_name)   # Usually in the output directory
 
         noise_maps = torch.load("%s/noise_maps.pth" % trained_networks_dir)
         generators = torch.load("%s/generators.pth" % trained_networks_dir)
