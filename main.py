@@ -23,6 +23,8 @@ def get_tags(opt):
 def main():
     """ Main Training funtion. Parses inputs, inits logger, trains, and then generates some samples. """
 
+    render_mario = True
+
     # torch.autograd.set_detect_anomaly(True)
 
     # Logger init
@@ -64,7 +66,7 @@ def main():
     # Generate Samples of same size as level
     logger.info("Finished training! Generating random samples...")
     in_s = None
-    generate_samples(generators, noise_maps, reals, noise_amplitudes, opt, in_s=in_s)
+    generate_samples(generators, noise_maps, reals, noise_amplitudes, opt, render_mario, in_s=in_s)
 
     # Generate samples of smaller size than level
     logger.info("Generating arbitrary sized random samples...")
@@ -74,7 +76,7 @@ def main():
     real_down = real_down[0]
     # necessary for correct input shape
     in_s = torch.zeros(real_down.shape, device=opt.device)
-    generate_samples(generators, noise_maps, reals, noise_amplitudes, opt, in_s=in_s,
+    generate_samples(generators, noise_maps, reals, noise_amplitudes, opt, render_mario, in_s=in_s,
                      scale_v=scale_v, scale_h=scale_h, save_dir="arbitrary_random_samples",)
 
 

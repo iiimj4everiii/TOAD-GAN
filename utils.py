@@ -94,7 +94,7 @@ use_gen.set(False)
 is_loaded.set(False)
 
 # Path to the AI Framework jar for Playing levels
-MARIO_AI_PATH = os.path.abspath(os.path.join(os.path.curdir, "Mario-AI-Framework/mario-1.0-SNAPSHOT.jar"))
+# MARIO_AI_PATH = os.path.abspath(os.path.join(os.path.curdir, "Mario-AI-Framework/mario-1.0-SNAPSHOT.jar"))
 
 # Level to Image renderer
 ImgGen = LevelImageGen(os.path.join(os.path.join(os.curdir, "utils"), "sprites"))
@@ -163,32 +163,32 @@ def load_level(fname):
     return level_obj
 
 
-def play_level(level_obj):
-    error_msg.set("Playing level...")
-    is_loaded.set(False)
-    remember_use_gen = use_gen.get()
-    use_gen.set(False)
+def play_level(level_obj, game, gateway, render_mario):
+    # error_msg.set("Playing level...")
+    # is_loaded.set(False)
+    # remember_use_gen = use_gen.get()
+    # use_gen.set(False)
     # Py4j Java bridge uses Mario AI Framework
-    gateway = JavaGateway.launch_gateway(classpath=MARIO_AI_PATH, die_on_exit=True, redirect_stdout=sys.stdout, redirect_stderr=sys.stderr)
-    game = gateway.jvm.engine.core.MarioGame()
+    # gateway = JavaGateway.launch_gateway(classpath=MARIO_AI_PATH, die_on_exit=True, redirect_stdout=sys.stdout, redirect_stderr=sys.stderr)
+    # game = gateway.jvm.engine.core.MarioGame()
     perc = 0
     try:
-        game.initVisuals(2.0)
-        agent = gateway.jvm.agents.robinBaumgarten.Agent()
-        game.setAgent(agent)
+        # game.initVisuals(2.0)
+        # agent = gateway.jvm.agents.robinBaumgarten.Agent()
+        # game.setAgent(agent)
         # while True:
-        result = game.gameLoop(''.join(level_obj.ascii_level), 50, 0, True, 30)
+        result = game.gameLoop(''.join(level_obj.ascii_level), 20, 0, render_mario, 1000000)
         perc = int(result.getCompletionPercentage() * 100)
         error_msg.set("Level Played. Completion Percentage: %d%%" % perc)
     except Exception:
         error_msg.set("Level Play was interrupted.")
         is_loaded.set(True)
-        use_gen.set(remember_use_gen)
-    # finally:
+        # use_gen.set(remember_use_gen)
+    finally:
         # game.getWindow().dispose()
-        # gateway.java_process.kill()
-        # gateway.close()
+        gateway.java_process.kill()
+        gateway.close()
 
     is_loaded.set(True)
-    use_gen.set(remember_use_gen)  # only set use_gen to True if it was previously
+    # use_gen.set(remember_use_gen)  # only set use_gen to True if it was previously
     return perc
